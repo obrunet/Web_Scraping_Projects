@@ -2,6 +2,8 @@
 
 - 2019-10-20 - [Pokemon's database](https://pokemondb.net/) - a little more complicated scraping task using bs4, different first tries are made with the notebooks in the directory but the main and final script with pycharm is [HERE](https://github.com/obrunet/Web_Scraping_Projects/blob/master/2019-10-20-pokemon_db/main.py). Then i've started to make a [statisctical analysis](https://github.com/obrunet/Web_Scraping_Projects/blob/master/2019-10-20-pokemon_db/pokemon_stats.ipynb) but it's uncomplete, i'll finished later if i've time :)
 
+- 2019-11-07 - [Historical climate & meteo data](www.infoclimat.fr) - advanced scraping using different ways and technics to retrieve data with bs4, first tries with a jupyter [notebook](https://github.com/obrunet/Web_Scraping_Projects/blob/master/2019-11-07-meteo/meteo_scraping.ipynb), the final python script can be found [here](https://github.com/obrunet/Web_Scraping_Projects/blob/master/2019-11-07-meteo/several_webpages_scraping.py) it makes use of FakeUserAgent to forge requests with random realistic browser's headers. I've also use sleep intervals between requests of a random nb of seconds. 
+
 ---
 More to come in the next weeks:
 - retrieve news' titles of tabloid or online newspapers
