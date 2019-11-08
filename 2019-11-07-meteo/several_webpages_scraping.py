@@ -6,7 +6,8 @@ Author : Olivier Brunet
 Licence : GPL
 """
 
-import pickle, os, csv, requests, datetime
+
+import pickle, os, requests, datetime
 from bs4 import BeautifulSoup
 from requests.exceptions import HTTPError
 from fake_useragent import UserAgent
@@ -16,25 +17,28 @@ from time import sleep
 
 file_name_pickle, file_name_csv = 'scraped_page.pickle', 'scraped_data.csv'
 days, months_nb, years = list(range(1, 32)), list(range(1, 12)), [2016, 2017, 2018, 2019]
-months = ['janvier', 'fevrier', 'mars', 'avril', 'mai', 'juin', 'juillet', 'aout', 'septembre'\
-          'octobre', 'novembre', 'decembre']
+months = ['janvier', 'fevrier', 'mars', 'avril', 'mai', 'juin', 'juillet', 'aout', 'septembre', 'octobre', 'novembre', 'decembre']
 
 
-def retrieve_webpage(page_url):
-    """Get a webpage with the requests module & return the response"""
-    # if the page has already been downloaded & saved
-    if os.path.exists(file_name_pickle):
-        with open(file_name_pickle, 'rb') as f:
-            print(f"Loading cached {file_name_pickle}")
-            response = pickle.load(f)
-    # otherwise fetch it for the first time
+def remove_pickle_file(file_name):
+    if os.path.exists(file_name):
+        os.remove(file_name)
     else:
-        print(f"Fetching {page_url} from the internet")
+        print("The cached pickle file does not exist")
+
+
+def retrieve_webpage(url):
+    """Get a webpage with the requests module & return the response"""
+    remove_pickle_file(file_name_pickle)
+
+    # fetch webpage for the first time and saved it as a pickle file
+    if not os.path.exists(file_name_pickle):
+        print(f"Fetching {url} from the internet")
         try:
             headers = {'User-Agent': UserAgent().random}
-            response = requests.get(page_url, headers=headers)
+            req_response = requests.get(url, headers=headers)
             # If the response was successful, no Exception will be raised
-            response.raise_for_status()
+            req_response.raise_for_status()
         except HTTPError as http_err:
             print(f'HTTP error occurred: {http_err}')
             return None
@@ -45,8 +49,15 @@ def retrieve_webpage(page_url):
             print('Request success!')
             with open(file_name_pickle, 'wb') as f:
                 print(f"Writing cached {file_name_pickle}")
-                pickle.dump(response, f)
-            return response
+                pickle.dump(req_response, f)
+            return req_response
+
+    # otherwise load saved file
+    else:
+        with open(file_name_pickle, 'rb') as f:
+            print(f"Loading cached {file_name_pickle}")
+            req_response = pickle.load(f)
+        return req_response
 
 
 def get_response_data(resp, date):
@@ -55,6 +66,7 @@ def get_response_data(resp, date):
     # classes range from class_='cdata-hour23' for 00h to class_='cdata-hour00' for 1h
     hr_range = [f"{i:02d}" for i in list(range(23, -1, -1)) ]
     data = ""
+
     for h in hr_range:
         class_ = 'cdata-hour' + h
         try:
@@ -81,12 +93,13 @@ def get_response_data(resp, date):
             wind = row.find('span', text="km/h", attrs={'class': 'tab-units-v'}).previous_sibling.previous_sibling.text
         except:
             wind = 'NaN'
-        result = ';'.join([date, hour, temp, rain, humi, wind]) + '\n'
+        result = ';'.join([str(date), hour, temp, rain, humi, wind]) + '\n'
         data += result
     return data
 
 
 if __name__ == "__main__":
+    remove_pickle_file(file_name_pickle)
     csv_header = "date;heure;temperature(°C);pluie(mm/1h);humidite(%);vent_moyen(km/h)\n"
     with open(file_name_csv, 'w') as f:
         f.write(csv_header)
@@ -98,13 +111,21 @@ if __name__ == "__main__":
                 # if current_date isn't a valid date
                 except ValueError:
                     continue
-                # check is date is in the future !!!!!!!!!!!!!!!!!!!!!!!
-
-
+                # check if date is in the future !!!!!!!!!!!!!!!!!!!!!!!
                 # wait a random amount of time to mimic human behavior, before a new web page request
                 sleep(randint(2, 15))
+                if d == 1:
+                    d = "1er"
                 page_url = f"https://www.infoclimat.fr/observations-meteo/archives/{d}/{months[m-1]}/{y}/paris-montsouris/07156.html"
-                response = retrieve_webpage(page_url)
+                try:
+                    response = retrieve_webpage(page_url)
+                    if response is None:
+                        continue
+                except None:
+                    continue
+
                 page_data = get_response_data(response, current_date)
                 with open(file_name_csv, 'a') as f:
                     f.write(page_data)
+                    print("Data written for date : ", str(current_date), " erasing cached pickle file...")
+                remove_pickle_file(file_name_pickle)
