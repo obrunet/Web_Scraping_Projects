@@ -11,5 +11,7 @@ More to come in the next weeks:
 - get top 250 movies on IMDB
 - download every link on a specific webpage, display if links are dead
 - image site downloader (for image search engines)
+- use of several containers with tor to change IP and retrieve many pages at a time
+- wikistat.fr all docs
 - etc...
 - use of scrapy / selenium
