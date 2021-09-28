@@ -4,8 +4,10 @@
 
 - 2019-11-07 - [Historical climate & meteo data](www.infoclimat.fr) - advanced scraping using different ways and technics to retrieve data with bs4, first tries with a jupyter [notebook](https://github.com/obrunet/Web_Scraping_Projects/blob/master/2019-11-07-meteo/meteo_scraping.ipynb), the final python script can be found [here](https://github.com/obrunet/Web_Scraping_Projects/blob/master/2019-11-07-meteo/several_webpages_scraping.py) it makes use of FakeUserAgent to forge requests with random realistic browser's headers. I've also use sleep intervals between requests of a random nb of seconds. Finally, the script is quite robust, all cases are managed, missing values, http errors...
 
+- 2020-12-15 - [Oxford 5000](https://www.oxfordlearnersdictionaries.com/wordlists/oxford3000-5000) - using bs4, let's retrieve automatically all the most frequently used English words with their definitions, explanations, examples, their sounds and so on... Here is the [jupyter notebook](https://github.com/obrunet/Web_Scraping_Projects/blob/master/2020-12-15-Oxford-most-freq-words/final_ter.ipynb), and [the final python script](https://github.com/obrunet/Web_Scraping_Projects/blob/master/2020-12-15-Oxford-most-freq-words/final.py) 
+
 ---
-More to come in the next weeks:
+More ideas:
 - retrieve news' titles of tabloid or online newspapers
 - scrape tweets message
 - get top 250 movies on IMDB
